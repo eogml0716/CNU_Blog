@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { deletePostById, getPostById } from '../api';
-import { IAdvertisement, IPost } from '../api/types';
+import { IPost } from '../api/types';
 import NotFound from '../components/NotFound';
 import Tag from '../components/Tag';
 
@@ -65,23 +65,18 @@ const Post = () => {
   const [post, setPost] = useState<IPost | null>(null);
   const navigate = useNavigate();
 
-  const clickDeleteButton = () => {
+  const clickDeleteButton = async () => {
     const result = window.confirm('정말로 게시글을 삭제하시겠습니까?');
     if (result) {
-      requestDeletePostById();
+      await deletePostById(Number(postId));
+      navigate('/');
     }
   };
 
-  const requestDeletePostById = async () => {
-    await deletePostById(Number(postId)); // Cast postId to Number
-    navigate('/');
-  };
   const fetchPostById = async () => {
-    const { data } = await getPostById(Number(postId)); // Cast postId to Number
-    const { post } = data;
-    setPost(post);
+    const { data } = await getPostById(Number(postId));
+    setPost(data.post);
   };
-
 
   useEffect(() => {
     fetchPostById();
@@ -90,6 +85,7 @@ const Post = () => {
   if (!post) {
     return <NotFound />;
   }
+
 
   return (
     <div style={{ margin: '5.5rem auto', width: '700px' }}>

@@ -8,15 +8,15 @@ const Home = () => {
   const [postList, setPostList] = useState<IPost[]>([]);
 
   const fetchPostList = async () => {
-    const {data} = await getPostList();
-    setPostList(data.posts); // Assuming data is structured as { posts: IPost[] }
+    const { data } = await getPostList();
+    setPostList(data.posts);
   };
 
   useEffect(() => {
     fetchPostList();
   }, []);
 
-  if (postList.length == 0) {
+  if (postList.length === 0) {
     return <NoPostList />;
   }
 
