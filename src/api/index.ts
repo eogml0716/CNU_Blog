@@ -26,10 +26,14 @@ export const getPostById = (id: number) => {
   return instance.get(`/post/${id}`);
 };
 
-export const updatePostById = () => {
-  return null;
+export const updatePostById = (id: number, title: string, contents: string, tag: string) => {
+  return instance.put(`/post/${id}`, {
+    title,
+    contents,
+    tag,
+  });
 };
 
-export const deletePostById = () => {
-  return null;
+export const deletePostById = (id: number) => {
+  return instance.delete(`/post/${id}`);
 };
