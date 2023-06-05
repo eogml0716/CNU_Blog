@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { deletePostById, getPostById } from '../api';
 import { IPost } from '../api/types';
@@ -63,29 +63,40 @@ const Post = () => {
   const params = useParams();
   const { postId } = params;
   const [post, setPost] = useState<IPost | null>(null);
-  const navigate = useNavigate();
-
-  const clickDeleteButton = async () => {
-    const result = window.confirm('정말로 게시글을 삭제하시겠습니까?');
-    if (result) {
-      await deletePostById(Number(postId));
-      navigate('/');
-    }
-  };
 
   const fetchPostById = async () => {
     const { data } = await getPostById(Number(postId));
-    setPost(data.post);
+    const { post } = data;
+    console.log(post.contents);
+    console.log(post.createdAt);
+    console.log(post.id);
+    console.log(post.tag);
+    console.log(post.title);
+    console.log(post.updatedAt);
+    setPost(post);
   };
 
   useEffect(() => {
     fetchPostById();
   }, []);
 
+  const navigate = useNavigate();
+
   if (!post) {
     return <NotFound />;
   }
 
+  const requestDeletePostById = async () => {
+    await deletePostById(Number(postId));
+    navigate('/');
+  };
+
+  const clickDeleteButton = () => {
+    const result = window.confirm('정말로 게시글을 삭제하시겠습니까?');
+    if (result) {
+      requestDeletePostById();
+    }
+  };
 
   return (
     <div style={{ margin: '5.5rem auto', width: '700px' }}>
@@ -96,10 +107,10 @@ const Post = () => {
             <div>n분전</div>
           </Info>
           <div>
-            {/*todo 수정/삭제 버튼 작성*/}
-            <Link to='/write' state={{ postId }} style={{ marginRight: 10 }}>
-              <TextButton> 삭제</TextButton>
+            <Link to="/write" state={{ postId }} style={{ marginRight: 10 }}>
+              <TextButton>수정</TextButton>
             </Link>
+            <TextButton onClick={clickDeleteButton}>삭제</TextButton>
           </div>
         </Toolbar>
         {post?.tag && (

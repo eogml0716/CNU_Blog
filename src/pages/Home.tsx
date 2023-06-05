@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react';
 import { getPostList } from '../api';
 import PostListItem from '../components/PostListItem';
-import { IPost } from '../api/types';
+import { IResponsePostList } from '../api/types';
 import NoPostList from '../components/NoPostList';
 
 const Home = () => {
-  const [postList, setPostList] = useState<IPost[]>([]);
+  const [postList, setPostList] = useState<IResponsePostList>([]);
 
   const fetchPostList = async () => {
     const { data } = await getPostList();
-    setPostList(data.posts);
+    console.log(data);
+    setPostList(data);
   };
 
   useEffect(() => {
@@ -22,8 +23,8 @@ const Home = () => {
 
   return (
     <div>
-      {postList.map((item, index) => (
-        <PostListItem key={index} id={item.id} title={item.title} contents={item.contents} tag={item.tag} />
+      {postList.map(({ post }, index) => (
+        <PostListItem key={index} id={post.id} title={post.title} contents={post.contents} tag={post.tag} />
       ))}
     </div>
   );

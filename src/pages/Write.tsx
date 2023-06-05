@@ -85,37 +85,27 @@ const SaveButton = styled.button`
 `;
 
 const Write = () => {
-  const {state} = useLocation();
-  const isEdit = state?.postId;
-
-  const fetchPostById = async (postId: number) => { // postId should be number
-    const {data} = await getPostById(postId);
-    const {post} = data;
-    setTitle(post.title);
-    setContent(post.contents);
-    setTag(post.tag);
-  }
-
-  useEffect(() => {
-    if(isEdit) {
-      fetchPostById(state.postId);
-    }
-  }, []);
-
-
-  const requestUpdatePost = async () => {
-    await updatePostById(state.postId, title, content, tag as TAG); // Ensure tag is of type TAG
-  };
-
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [tag, setTag] = useState<TAG>(TAG.REACT);
-  const tagList = Object.keys(TAG); // Enum의 모든 값을 얻기 위해 Object.values를 사용합니다.
+  const tagList = Object.keys(TAG);
+
+  const handleChangeTitle = (event: ChangeEvent<HTMLInputElement>) => {
+    setTitle(event.target.value);
+  };
+
+  const handleChangeContent = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    setContent(event.target.value);
+  };
+
+  const handleChangeTag = (event: ChangeEvent<HTMLSelectElement>) => {
+    setTag(event.target.value as TAG);
+  };
 
   const navigate = useNavigate();
 
-  const requestCreatePost = async() => {
-    await  createPost(title, content, tag);
+  const requestCreatePost = async () => {
+    await createPost(title, content, tag);
   };
 
   const clickConfirm = () => {
@@ -130,30 +120,39 @@ const Write = () => {
       requestCreatePost();
     }
     navigate('/');
-  }
-
-  const handleChangeTitle = (event: ChangeEvent<HTMLInputElement>) => {
-    setTitle(event.target.value);
   };
 
-  const handleChangeContent = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    setContent(event.target.value);
+  const { state } = useLocation();
+  const isEdit = state?.postId;
+
+  const fetchPostById = async (postId: string) => {
+    const { data } = await getPostById(Number(postId));
+    const { post } = data;
+    setTitle(post.title);
+    setContent(post.contents);
+    setTag(post.tag);
   };
 
-  const handleChangeTag = (event: ChangeEvent<HTMLSelectElement>) => {
-    setTag(event.target.value as TAG);
+  useEffect(() => {
+    if (isEdit) {
+      fetchPostById(state.postId);
+    }
+  }, []);
+
+  const requestUpdatePost = async () => {
+    await updatePostById(state.postId, title, content, tag);
   };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <div style={{ height: 'calc(100% - 4rem)', paddingBottom: '4rem' }}>
         <TitleInput placeholder="제목을 입력하세요" value={title} onChange={handleChangeTitle} />
-        <TagSelect value={tag} onChange={handleChangeTag} placeholder={'태그를 선택하세요'}>
-          {tagList.map(tag => (
-            <option key={tag}>{tag}</option>
-          ))}
+        <TagSelect placeholder={'태그를 선택하세요'} value={tag} onChange={handleChangeTag}>
+          {tagList.map(tag => {
+            return <option key={tag}>{tag}</option>;
+          })}
         </TagSelect>
-        <Editor value={content} onChange={handleChangeContent} placeholder="내용을 입력하세요" />
+        <Editor placeholder="내용을 입력하세요" value={content} onChange={handleChangeContent} />
       </div>
       <BottomSheet>
         <Link to="/">
