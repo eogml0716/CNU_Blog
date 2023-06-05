@@ -61,7 +61,7 @@ const Text = styled.p`
 
 const Post = () => {
   const params = useParams();
-  const { postId } = params;
+  const { postId } = params as {postId: string};
   const [post, setPost] = useState<IPost | null>(null);
 
   const fetchPostById = async () => {
