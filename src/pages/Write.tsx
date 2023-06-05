@@ -88,7 +88,7 @@ const Write = () => {
   const {state} = useLocation();
   const isEdit = state?.postId;
 
-  const fetchPostById = async (postId: string) => {
+  const fetchPostById = async (postId: number) => { // postId should be number
     const {data} = await getPostById(postId);
     const {post} = data;
     setTitle(post.title);
@@ -102,8 +102,9 @@ const Write = () => {
     }
   }, []);
 
+
   const requestUpdatePost = async () => {
-    await updatePostById(state.postId, title, content, tag);
+    await updatePostById(state.postId, title, content, tag as TAG); // Ensure tag is of type TAG
   };
 
   const [title, setTitle] = useState('');

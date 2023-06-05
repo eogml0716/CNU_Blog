@@ -73,14 +73,15 @@ const Post = () => {
   };
 
   const requestDeletePostById = async () => {
-    await deletePostById(postId);
+    await deletePostById(Number(postId)); // Cast postId to Number
     navigate('/');
   };
   const fetchPostById = async () => {
-    const { data } = await getPostById(postId);
+    const { data } = await getPostById(Number(postId)); // Cast postId to Number
     const { post } = data;
     setPost(post);
   };
+
 
   useEffect(() => {
     fetchPostById();
